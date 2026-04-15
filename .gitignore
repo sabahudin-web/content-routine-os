@@ -1,0 +1,43 @@
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V2
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Claude Code internal
+.claude/settings.local.json
+.playwright-mcp/
+.excalidraw/
+
+# Personal / sensitive
+inbox/outputs/md/*.md
+inbox/outputs/html/*.html
+inbox/outputs/pdf/*.pdf
+inbox/outputs/images/*.png
+inbox/outputs/images/*.jpg
+inbox/outputs/images/*.jpeg
+inbox/outputs/excalidraw/*.excalidraw
+inbox/outputs/json/*.json
+!inbox/outputs/**/.gitkeep
+
+# Large binaries (personal design assets)
+design-kit/assets/my-photos/*
+!design-kit/assets/my-photos/README.md
+design-kit/assets/logos/*.png
+design-kit/assets/logos/*.jpg
+design-kit/assets/logos/*.svg
+design-kit/assets/logos/*.pdf
+!design-kit/assets/logos/README.md
+design-kit/assets/pitch-deck-template/
