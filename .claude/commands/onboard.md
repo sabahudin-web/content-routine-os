@@ -109,24 +109,102 @@ Then walk through all 22 skills in plain language (2 sentences each):
 
 ## Phase 2: Tool Setup Check
 
+**IMPORTANT:** Always ask about tools directly — never assume any tool is connected based on what you detect in the current session. A tool may be active in this session but not set up for the client's own install.
+
 Ask:
 
-> "Before we go into your content, let me check which tools you have ready. This affects how the system works.
+> "Before we go into your business setup, let me check which tools you have ready. This affects how the system runs.
 >
-> Do you have these tools set up? Answer yes/no for each:
+> Answer yes/no for each:
 >
-> 1. **Trigify** — used to find trending content in your niche (app.trigify.io). Also requires the Trigify CLI installed locally.
-> 2. **Notion** — used to store your YouTube drafts, LinkedIn posts, and newsletters automatically.
-> 3. **Nano Banana** — used to generate thumbnail images (an MCP server).
-> 4. **Excalidraw** — free whiteboard tool at excalidraw.com — used to view the visual diagrams this system creates."
+> 1. **Trigify** — pulls trending content signals from LinkedIn, YouTube, and Twitter in your niche. Required for Step 1 of /content. Has both a web app and a CLI tool.
+> 2. **Notion** — stores your YouTube drafts, LinkedIn posts, and newsletters automatically in organized databases.
+> 3. **Nano Banana** — generates thumbnail and infographic images directly inside Claude Code.
+> 4. **Excalidraw** — free whiteboard tool for viewing the visual diagrams this system creates."
 
-For each tool they don't have:
-- **No Trigify:** "Step 1 of /content will use WebSearch instead to find ideas — it'll work, just won't have the real-time engagement signals. You can add Trigify later."
-- **No Notion:** "All outputs will save locally to inbox/outputs/ instead. You'll have everything, just not auto-organized in Notion."
-- **No Nano Banana:** "Image generation won't work — you'll get a written image prompt instead of an actual generated image. Can be set up later."
-- **No Excalidraw:** "Just download the free app or go to excalidraw.com — it's free, no account needed to open files."
+---
 
-Note what's missing. Continue regardless.
+### If they don't have Trigify (or want to set it up):
+
+Tell them:
+
+> "Trigify is the signal engine — it tells you what's actually getting traction in your niche on LinkedIn, YouTube, and Twitter before you create anything. Without it, /content falls back to WebSearch, which works but won't have real engagement data.
+>
+> **Pricing:** Essential plan is ~$120/month at trigify.io — that's what you need to run content searches.
+>
+> **To install:**
+>
+> Step 1 — Sign up at trigify.io and get the Essential plan.
+>
+> Step 2 — Install the Trigify CLI in your terminal:
+> ```
+> npm install -g @trigify/cli
+> ```
+>
+> Step 3 — Log in:
+> ```
+> trigify login
+> ```
+> (This opens a browser window. Sign in with your Trigify account.)
+>
+> Step 4 — Verify it's connected:
+> ```
+> trigify whoami
+> ```
+> (Should show your account name. If it does, you're set.)
+>
+> Step 5 — Install the Trigify skills (lets Claude create Trigify searches automatically):
+> ```
+> git clone https://github.com/trigify/skills.git .claude/skills/trigify
+> ```
+>
+> Once that's done, come back here and we'll set up your content searches together."
+
+If they don't want to set it up now: "No problem — /content will use WebSearch to find ideas. You can add Trigify later. I'll note this in your setup."
+
+---
+
+### If they don't have Notion:
+
+> "Without Notion, everything saves locally to `inbox/outputs/` on your machine — you'll have all the files, just not auto-organized in Notion. You can add it later. For now, I'll note that outputs go to local folders."
+
+---
+
+### If they don't have Nano Banana (or want to set it up):
+
+Tell them:
+
+> "Nano Banana is what generates your thumbnail images and infographic visuals directly inside Claude Code. Without it, the system gives you a written image prompt instead of an actual image.
+>
+> **Two ways to install it:**
+>
+> **Option A (recommended — simpler):**
+> ```
+> claude mcp add nano-banana -- npx @ycse/nanobanana-mcp
+> ```
+> GitHub: github.com/YCSE/nanobanana-mcp
+>
+> **Option B (alternative):**
+> See github.com/ConechoAI/Nano-Banana-MCP for manual setup
+>
+> **Both require a Gemini API key:**
+> 1. Go to aistudio.google.com → Get API key
+> 2. Add it to your environment: `export GEMINI_API_KEY=your_key_here`
+>    (Or add to your shell profile so it persists)
+>
+> After installing, restart Claude Code and come back here."
+
+If they don't want to set it up now: "Got it — visual outputs will be text prompts describing the image. You can add Nano Banana later."
+
+---
+
+### Excalidraw:
+
+> "Excalidraw is just a free web tool — no install needed. Go to **excalidraw.com** and open any `.excalidraw` file the system creates. That's it."
+
+---
+
+Note what's missing and continue. We don't block setup on missing tools — we adapt.
 
 ---
 
@@ -214,7 +292,7 @@ Tell them:
 > 5. What's a belief you held 2 years ago that you've since completely reversed?
 > 6. What do you wish someone had told you when you started?"
 
-After each answer: write it into `.claude/skills/acquisition-content-newsletter-repurpose/references/my-story-doc.md` using the story schema:
+After each answer: write it into `.claude/skills/acquisition-content-newsletter-repurpose/references/my-story-doc.md` using the story schema below. Before writing the first story, verify the directory `.claude/skills/acquisition-content-newsletter-repurpose/references/` exists — create it if it doesn't. Append each story to the file rather than overwriting it.
 ```
 ## [Story title]
 **The situation:** [what was happening]
@@ -266,25 +344,66 @@ Write `design-kit/brand-identity.md` and `design-kit/design-tokens.md` with thei
 
 ### Trigify Setup
 
-If they have Trigify:
+If they have Trigify (installed and verified via `trigify whoami` in Phase 2):
 
-> "Let's set up your Trigify searches. These are the signals /content uses to find what's resonating in your niche.
+Tell them:
+
+> "Now let's configure your Trigify searches. These are the signals /content reads every time you run it — what's getting traction in your niche, right now.
 >
-> In your Trigify account (app.trigify.io → Searches), create:
+> I'll ask you a few questions so I can help you build the right searches."
+
+**Ask these questions one at a time:**
+
+**Question 1 — Your niche keywords:**
+> "What are the main topics and terms your audience searches for or talks about? Give me 5-10 words or phrases. (Examples: 'AI automation', 'LinkedIn growth', 'B2B sales', 'executive coaching', 'SaaS onboarding')"
+
+From their answer: draft a Boolean query suggestion, e.g.:
+`("AI automation" OR "workflow automation" OR "AI tools") AND (LinkedIn OR "social selling")`
+Show them the query. Ask: "Does this capture your space, or should I adjust any terms?"
+
+**Question 2 — Competitor or creator LinkedIn accounts:**
+> "Are there any creators, thought leaders, or competitors on LinkedIn whose posts you want to track? If you're willing to share their LinkedIn profile URLs or names, I can set up LinkedIn account monitors for them.
 >
-> **1. LinkedIn search:** Create a search for posts in your niche. What keywords define your space? (e.g., 'AI automation', 'sales consulting', 'fitness coaching') I'll help you write a Boolean query.
+> You don't have to — just helps make the signals more targeted."
+
+If they share accounts: note the LinkedIn URLs. These become LinkedIn account monitors in Trigify.
+
+**Question 3 — YouTube channels to watch:**
+> "Which YouTube channels do you want to track for content signals? Give me 3-4 channel names or URLs in your niche — creators you respect or watch regularly. Doesn't have to be your competitors."
+
+**Question 4 — Twitter/X accounts or hashtags (optional):**
+> "Any Twitter/X accounts or hashtags worth monitoring? (Optional — skip if you don't use Twitter)"
+
+**Now guide them to create searches in Trigify:**
+
+> "Here's exactly what to create in Trigify (app.trigify.io → Searches):
 >
-> **2. YouTube channel monitors:** Add 3-4 creators in your space you want to track. Give me their YouTube channel URLs or names.
+> **Search 1 — LinkedIn Posts:**
+> - Type: LinkedIn Posts
+> - Query: [paste the Boolean query you built together]
+> - Filter: Last 7 days, minimum 50 engagements
 >
-> **3. Twitter/X search (optional):** 1-2 searches for keywords or specific profiles you follow.
+> **Search 2 — LinkedIn Accounts (if they shared accounts):**
+> - Type: LinkedIn Accounts
+> - Add: [list the LinkedIn profiles they provided]
 >
-> Once you've created them, paste the search IDs here (found in the URL or settings of each search)."
+> **Search 3 — YouTube Channels:**
+> - Type: YouTube Channels
+> - Add: [the 3-4 channels they named]
+>
+> **Search 4 — Twitter/X (if applicable):**
+> - Type: Twitter Posts
+> - Query: [relevant keywords]
+>
+> Once you've created each search, paste the search IDs here. You'll find the ID in the URL when you open each search, or in the search settings."
 
 Once they provide IDs:
-1. Write `context/trigify-search-ids.md` with their IDs
+1. Write `context/trigify-search-ids.md` with their IDs and search descriptions
 2. Update `.claude/skills/acquisition-content-ideas/SKILL.md` — replace `[YOUR_LINKEDIN_TRIGIFY_ID]`, `[YOUTUBE_CHANNEL_1_TRIGIFY_ID]` etc. with their real IDs and creator names
 
-If they don't have Trigify yet: update `context/trigify-search-ids.md` with a note that it'll use WebSearch fallback.
+Confirm: "Trigify connected — /content will now pull live signals from [N] searches in your niche."
+
+If they don't have Trigify yet: update `context/trigify-search-ids.md` with a note that it'll use WebSearch fallback, and leave placeholders in SKILL.md intact.
 
 ---
 
